@@ -47,7 +47,7 @@
           
     - name: Copy SonarQube service file
       copy:
-        src: sonarqube.service
+        src: sonarqube.jq
         dest: /etc/systemd/system/sonarqube.service
         mode: 0644
 

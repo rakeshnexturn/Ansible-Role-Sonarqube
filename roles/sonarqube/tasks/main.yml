@@ -21,11 +21,11 @@
     - name: Download SonarQube zip file
       get_url:
         url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.1.69595.zip
-        dest: /home/ubuntu/sonarqube-9.9.1.69595.zip
+        dest: /home/ubuntu/sonarqube-{{ sonarqube_version }}.zip
 
     - name: Unzip SonarQube
       unarchive:
-        src: /home/ubuntu/sonarqube-9.9.1.69595.zip
+        src: /home/ubuntu/sonarqube-{{ sonarqube_version }}.zip
         dest: /opt/
         owner: sonarqube
         group: sonarqube

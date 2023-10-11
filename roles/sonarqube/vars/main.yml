@@ -1,2 +1,4 @@
 ---
 # vars file for roles/sonarqube
+sonarqube_version: "9.9.1.69595"
+

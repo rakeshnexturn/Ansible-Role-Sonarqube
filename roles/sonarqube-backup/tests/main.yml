@@ -1,0 +1,8 @@
+---
+- name: Test SonarQube Backup Role
+  hosts: localhost
+  tasks:
+    - name: Include the sonarqube-backup role
+      include_role:
+        name: sonarqube-backup
+

@@ -1,0 +1,5 @@
+---
+sonarqube_backup_path: "/backup/sonarqube_backups"
+postgres_backup_path: "/backup"
+centralized_backup_directory: "/centralized/backup/directory"
+

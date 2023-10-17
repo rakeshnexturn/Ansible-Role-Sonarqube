@@ -1,0 +1,39 @@
+---
+- name: Generate SonarQube data backup filename
+  set_fact:
+    sonarqube_backup_filename: "{{ sonarqube_backup_path }}/sonarqube_data_backup_{{ ansible_date_time.iso8601 }}.tar.gz"
+
+- name: Create backup directory if not exists
+  file:
+    path: "{{ sonarqube_backup_path }}"
+    state: directory
+
+- name: Backup SonarQube data
+  command: tar -czf "{{ sonarqube_backup_filename }}" -C /opt/sonarqube-{{ sonarqube_version }}/ .
+  args:
+    warn: false
+
+- name: Generate PostgreSQL backup filename
+  set_fact:
+    postgres_backup_filename: "{{ postgres_backup_path }}/postgresql_sonarqube_backup_{{ ansible_date_time.iso8601 }}.sqlc"
+
+- name: Backup PostgreSQL database
+  command: pg_dump -U sonarqube -h localhost -p 5432 -F c -b -v -f "{{ postgres_backup_filename }}" sonarqube
+
+- name: Create backup directory for PostgreSQL if not exists
+  file:
+    path: "{{ postgres_backup_path }}"
+    state: directory
+
+- name: Copy PostgreSQL backup file
+  copy:
+    src: "{{ postgres_backup_filename }}"
+    dest: "{{ centralized_backup_directory }}/"
+    mode: '0644'
+
+- name: Copy SonarQube data backup file
+  copy:
+    src: "{{ sonarqube_backup_filename }}"
+    dest: "{{ centralized_backup_directory }}/"
+    mode: '0644'
+

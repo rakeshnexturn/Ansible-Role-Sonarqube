@@ -4,3 +4,4 @@
 
   roles:
     - sonarqube-backup
+    - sonarqube-update

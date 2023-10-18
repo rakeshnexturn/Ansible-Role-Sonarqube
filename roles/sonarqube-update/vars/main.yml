@@ -1,0 +1,4 @@
+---
+# vars file for sonarqube-update
+sonarqube_version: "9.9.2.77730"
+

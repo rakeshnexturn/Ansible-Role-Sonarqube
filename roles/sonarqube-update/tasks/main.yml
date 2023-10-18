@@ -1,0 +1,51 @@
+---
+# tasks file for sonarqube-update
+- name: Stop SonarQube service
+  systemd:
+    name: sonarqube
+    state: stopped
+    enabled: no
+
+- name: Download SonarQube zip file for the new version
+  get_url:
+    url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-{{ sonarqube_version }}.zip
+    dest: /home/ubuntu/sonarqube-{{ sonarqube_version }}.zip
+
+- name: Unzip SonarQube for the new version
+  unarchive:
+    src: /home/ubuntu/sonarqube-{{ sonarqube_version }}.zip
+    dest: /opt/
+    owner: sonarqube
+    group: sonarqube
+    remote_src: yes
+
+- name: Update SonarQube configuration
+  blockinfile:
+    path: /opt/sonarqube-{{ sonarqube_version }}/conf/sonar.properties
+    block: |
+      sonar.web.javaAdditionalOpts=-server
+      sonar.web.host=0.0.0.0
+      sonar.web.port=9000
+      sonar.search.javaOpts=-Xmx512m -Xms512m -XX:MaxDirectMemorySize=256m -XX:+HeapDumpOnOutOfMemoryError
+      sonar.log.level=INFO
+      sonar.path.logs=logs
+      sonar.jdbc.username=sonarqube
+      sonar.jdbc.password=pass
+      sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
+
+- name: Update SonarQube service file
+  template:
+    src: sonarqube.j2
+    dest: /etc/systemd/system/sonarqube.service
+    mode: 0644
+
+- name: Reload Systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Start SonarQube service for the new version
+  systemd:
+    name: sonarqube
+    state: started
+    enabled: yes
+
